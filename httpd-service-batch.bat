@@ -45,6 +45,11 @@ echo   4. 아파치 시스템서비스 시작
 echo   5. 아파치 시스템서비스 종료
 echo.
 set CHOICE=
+CALL NET SESSION >nul 2>&1
+IF NOT %ERRORLEVEL% == 0 (
+    echo 관리자권한이 필요 합니다. 관리자모드 로 재시작해주세요.
+    goto EXITPROG
+)
 set /p CHOICE=작업할 번호를 입력해주세요 :
 
 

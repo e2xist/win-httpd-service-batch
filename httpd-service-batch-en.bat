@@ -51,6 +51,11 @@ echo   4. apache service start
 echo   5. apache service stop
 echo.
 set CHOICE=
+CALL NET SESSION >nul 2>&1
+IF NOT %ERRORLEVEL% == 0 (
+    echo Administrative permissions required.
+    goto EXITPROG
+)
 set /p CHOICE=Choices number :
 
 
