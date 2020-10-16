@@ -1,74 +1,84 @@
 @echo off
+@chcp 65001 1> NUL 2> NUL
 setlocal
 REM ====================================
-REM È¯°æ¼³Á¤ ºÎºÐ
+REM í™˜ê²½ì„¤ì • ë¶€ë¶„
 REM ====================================
-set SERVICE_NAME=httpd-2.4.25
+REM ë“±ë¡ë  ì„œë¹„ìŠ¤ ëª…
+set SERVICE_NAME=httpd-2.4.46-php5
+
+REM HTTPD í´ë” ê²½ë¡œ (ë¹„ì›Œë‘ë©´ í˜„ìž¬ í´ë”ë¥¼ ê¸°ì¤€ìœ¼ë¡œ í•¨)
+set APPPATH=
+
+REM httpd.conf íŒŒì¼ì˜ ê²½ë¡œ (ë¹„ì›Œë‘ë©´ ì‚¬ìš© ì•ˆ í•¨)
+set HTTPD_CNF_PATH=
 
 
+
 REM ====================================
-REM ±¸¹® ½ÃÀÛ
+REM êµ¬ë¬¸ ì‹œìž‘
 REM ====================================
-REM Ã¢ »ö»ó ¹× Å©±â ÁöÁ¤
+REM ì°½ ìƒ‰ìƒ ë° í¬ê¸° ì§€ì •
 mode con cols=60 lines=20
 COLOR 3F
 
 
-REM ÇöÀç °æ·Î·Î ÀÌµ¿
+REM í˜„ìž¬ ê²½ë¡œë¡œ ì´ë™
 PUSHD "%~DP0"
 
 
 REM ====================================
-REM °æ·Î ¼³Á¤
+REM ê²½ë¡œ ì„¤ì •
 REM ====================================
-REM httpd.exe ÀÇ °æ·Î¸¦ Ã£±â
-set CURPATH=%~DP0
-set APPPATH=%CURPATH%
+REM APPPATH ê°€ ì§€ì •ë˜ì–´ìžˆì§€ ì•Šìœ¼ë©´ í˜„ìž¬ ê²½ë¡œë¥¼ ê¸°ì¤€ìœ¼ë¡œ ì„¤ì •.
+if "%APPPATH%" neq "" goto stuff
+    set APPPATH=%~DP0
+:stuff
 
 
 
 
 
+REM ====================================
+REM ë©”ë‰´ ì„ íƒ
+REM ====================================
 :SELECTION
 cls
 echo ==========================================
-echo ¡Ú Apache Web Server Service Add/Remover ¡Ú
+echo      Apache Web Server Service Add/Remover 
 echo                    Author : Hong seok-hoon
-echo                    version : 1.0.0
+echo                   Version : 1.2.20201016
+echo                   Service : [%SERVICE_NAME%] 
 echo ==========================================
-echo (¼±ÅÃÇ×¸ñ)
-echo   0. Á¾·á
-echo   1. ¾ÆÆÄÄ¡ ½Ã½ºÅÛ¼­ºñ½º µî·Ï
-echo   2. ¾ÆÆÄÄ¡ ½Ã½ºÅÛ¼­ºñ½º µî·ÏÇØÁ¦
-echo   3. ¾ÆÆÄÄ¡ ½Ã½ºÅÛ¼­ºñ½º µî·Ï¿©ºÎ È®ÀÎ
-echo   4. ¾ÆÆÄÄ¡ ½Ã½ºÅÛ¼­ºñ½º ½ÃÀÛ
-echo   5. ¾ÆÆÄÄ¡ ½Ã½ºÅÛ¼­ºñ½º Á¾·á
+echo (ì„ íƒí•­ëª©)
+echo   1. ì„œë¹„ìŠ¤ ë“±ë¡ì—¬ë¶€ í™•ì¸
+echo   2. ì„œë¹„ìŠ¤ ë“±ë¡í•˜ê¸°
+echo   3. ì„œë¹„ìŠ¤ ë“±ë¡ í•´ì œí•˜ê¸°
+echo   4. ë“±ë¡ëœ ì•„íŒŒì¹˜ ì„œë¹„ìŠ¤ ì‹œìž‘
+echo   5. ë“±ë¡ëœ ì•„íŒŒì¹˜ ì„œë¹„ìŠ¤ ì¢…ë£Œ
+echo   0. ì»¤ë§¨ë“œ ì¢…ë£Œ
 echo.
 set CHOICE=
 CALL NET SESSION >nul 2>&1
 IF NOT %ERRORLEVEL% == 0 (
-    echo °ü¸®ÀÚ±ÇÇÑÀÌ ÇÊ¿ä ÇÕ´Ï´Ù. °ü¸®ÀÚ¸ðµå ·Î Àç½ÃÀÛÇØÁÖ¼¼¿ä.
+    echo ê´€ë¦¬ìžê¶Œí•œì´ í•„ìš” í•©ë‹ˆë‹¤. ê´€ë¦¬ìžëª¨ë“œ ë¡œ ìž¬ì‹œìž‘í•´ì£¼ì„¸ìš”.
     goto EXITPROG
 )
-set /p CHOICE=ÀÛ¾÷ÇÒ ¹øÈ£¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä :
+set /p CHOICE=ìž‘ì—…í•  ë²ˆí˜¸ë¥¼ ìž…ë ¥í•´ì£¼ì„¸ìš” :
 
 
 if "%CHOICE%" == "" goto :SELECTION
 
-if %CHOICE% == 0 (
-    goto EXITPROG
-)
-
 if %CHOICE% == 1 (
-    goto INSTALL
+    goto SERVICE_CHECK
 )
 
 if %CHOICE% == 2 (
-    goto REMOVE
+    goto SERVICE_INSTALL
 )
 
 if %CHOICE% == 3 (
-    goto CHECK
+    goto SERVICE_REMOVE
 )
 
 if %CHOICE% == 4 (
@@ -79,21 +89,8 @@ if %CHOICE% == 5 (
     goto SERVICE_STOP
 )
 
-
-
-REM ==========================================
-REM ¼­ºñ½º µî·Ï È®ÀÎ
-REM ==========================================
-:CHECK
-sc query "%SERVICE_NAME%" >nul
-if "%ERRORLEVEL%" == "0" (
-	echo ¾ÆÆÄÄ¡ À¥¼­¹ö°¡ ¼³Ä¡µÇ¾î ÀÖ½À´Ï´Ù.
-	timeout /t 60
-	goto SELECTION
-) else (
-	echo ¾ÆÆÄÄ¡ À¥¼­¹ö°¡ ¾ÆÁ÷ ¼³Ä¡µÇÁö ¾Ê¾Ò½À´Ï´Ù.
-	timeout /t 60
-	goto SELECTION
+if %CHOICE% == 0 (
+    goto EXITPROG
 )
 
 
@@ -101,106 +98,129 @@ if "%ERRORLEVEL%" == "0" (
 
 
 REM ==========================================
-REM ¼­ºñ½º µî·Ï
+REM ì„œë¹„ìŠ¤ ë“±ë¡ í™•ì¸
 REM ==========================================
-:INSTALL
-
-REM ¼³Ä¡ ¿©ºÎ È®ÀÎ
-sc query "%SERVICE_NAME%" >nul
-if "%ERRORLEVEL%" == "0" (
-	echo ¾ÆÆÄÄ¡ À¥¼­¹ö°¡ ÀÌ¹Ì µî·ÏµÇ¾îÀÖ½À´Ï´Ù.
-	timeout /t 60
-	goto SELECTION
-)
-
-
-REM ¼³Ä¡ ÁøÇà
-"%APPPATH%\bin\httpd" -n "%SERVICE_NAME%" -k install
-if "%ERRORLEVEL%"=="0" (
-	CLS
-	echo ======================================
-	echo ¾ÆÆÄÄ¡ À¥¼­¹ö°¡ ½Ã½ºÅÛ ¼­ºñ½º¿¡ 'µî·Ï' µÇ¿´½À´Ï´Ù.
-	echo ======================================
-
-) else (
-	echo ======================================
-	echo ¾ÆÆÄÄ¡ À¥¼­¹ö µî·Ï °úÁ¤ Áß¿¡ ¿À·ù°¡ ¹ß»ýÇÏ¿´½À´Ï´Ù.
-	echo ======================================
-
-)
-timeout /t 60
-goto SELECTION
+:SERVICE_CHECK
+    sc query "%SERVICE_NAME%" >nul
+    if "%ERRORLEVEL%" == "0" (
+        echo ì•„íŒŒì¹˜ ì›¹ì„œë²„ê°€ ì„¤ì¹˜ë˜ì–´ ìžˆìŠµë‹ˆë‹¤.
+    ) else (
+        echo ì•„íŒŒì¹˜ ì›¹ì„œë²„ê°€ ì•„ì§ ì„¤ì¹˜ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.
+    )
+    timeout /t 60
+    goto SELECTION
 
 
 
 
 
 REM ==========================================
-REM ¼­ºñ½º µî·Ï ÇØÁ¦
+REM ì„œë¹„ìŠ¤ ë“±ë¡
 REM ==========================================
-:REMOVE
-sc query "%SERVICE_NAME%" >nul
-if "%ERRORLEVEL%" == "0" (
-	"%APPPATH%\bin\httpd" -n "%SERVICE_NAME%" -k stop
-	"%APPPATH%\bin\httpd" -n "%SERVICE_NAME%" -k uninstall
-	if "%ERRORLEVEL%"=="0" (
-		cls
-		echo ======================================
-		echo ¾ÆÆÄÄ¡ À¥¼­¹ö°¡ ½Ã½ºÅÛ ¼­ºñ½º¿¡¼­ 'µî·ÏÇØÁ¦' µÇ¿´½À´Ï´Ù.
-		echo ======================================
+:SERVICE_INSTALL
 
-	) else (
-		cls
-		echo ======================================
-		echo ¾ÆÆÄÄ¡ À¥¼­¹ö µî·ÏÇØÁ¦ °úÁ¤ Áß¿¡ ¿À·ù°¡ ¹ß»ýÇÏ¿´½À´Ï´Ù.
-		echo ======================================
+REM ì„¤ì¹˜ ì—¬ë¶€ í™•ì¸
+    sc query "%SERVICE_NAME%" >nul
+    if "%ERRORLEVEL%" == "0" (
+        echo ì•„íŒŒì¹˜ ì›¹ì„œë²„ê°€ ì´ë¯¸ ë“±ë¡ë˜ì–´ìžˆìŠµë‹ˆë‹¤.
+        timeout /t 60
+        goto SELECTION
+    )
 
-	)
-) else (
-	echo ¾ÆÆÄÄ¡ À¥¼­¹ö°¡ ÀÌ¹Ì ¼­ºñ½º µî·ÏµÇ¾îÀÖÁö ¾Ê½À´Ï´Ù.
-)
-timeout /t 60
-goto SELECTION
+REM ì„¤ì¹˜ ì§„í–‰
+    if "%HTTPD_CNF_PATH%" neq "" goto SERVICE_INSTALL_WITH_CONF
+        "%APPPATH%\bin\httpd" -n "%SERVICE_NAME%" -k install
+        goto SERVICE_INSTALL_RESULT
+
+:SERVICE_INSTALL_WITH_CONF
+    "%APPPATH%\bin\httpd" -n "%SERVICE_NAME%" -k install -f "%HTTPD_CNF_PATH%"
+    goto SERVICE_INSTALL_RESULT
+
+:SERVICE_INSTALL_RESULT
+    if "%ERRORLEVEL%"=="0" (
+        cls
+        echo ======================================
+        echo ì•„íŒŒì¹˜ ì›¹ì„œë²„ê°€ ì‹œìŠ¤í…œ ì„œë¹„ìŠ¤ì— 'ë“±ë¡' ë˜ì˜€ìŠµë‹ˆë‹¤.
+        echo ======================================
+
+    ) else (
+        echo ======================================
+        echo ì•„íŒŒì¹˜ ì›¹ì„œë²„ ë“±ë¡ ê³¼ì • ì¤‘ì— ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤.
+        echo ======================================
+    )
+    timeout /t 60
+    goto SELECTION
 
 
 
 
 
 REM ==========================================
-REM ¼­ºñ½º ½ÃÀÛ
+REM ì„œë¹„ìŠ¤ ë“±ë¡ í•´ì œ
+REM ==========================================
+:SERVICE_REMOVE
+    sc query "%SERVICE_NAME%" >nul
+    if "%ERRORLEVEL%" == "0" (
+        "%APPPATH%\bin\httpd" -n "%SERVICE_NAME%" -k stop
+        "%APPPATH%\bin\httpd" -n "%SERVICE_NAME%" -k uninstall
+        if "%ERRORLEVEL%"=="0" (
+            cls
+            echo ======================================
+            echo ì•„íŒŒì¹˜ ì›¹ì„œë²„ê°€ ì‹œìŠ¤í…œ ì„œë¹„ìŠ¤ì—ì„œ 'ë“±ë¡í•´ì œ' ë˜ì˜€ìŠµë‹ˆë‹¤.
+            echo ======================================
+
+        ) else (
+            cls
+            echo ======================================
+            echo ì•„íŒŒì¹˜ ì›¹ì„œë²„ ë“±ë¡í•´ì œ ê³¼ì • ì¤‘ì— ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤.
+            echo ======================================
+
+        )
+    ) else (
+        echo ì•„íŒŒì¹˜ ì›¹ì„œë²„ê°€ ì´ë¯¸ ì„œë¹„ìŠ¤ ë“±ë¡ë˜ì–´ìžˆì§€ ì•ŠìŠµë‹ˆë‹¤.
+    )
+    timeout /t 60
+    goto SELECTION
+
+
+
+
+
+REM ==========================================
+REM ì„œë¹„ìŠ¤ ì‹œìž‘
 REM ==========================================
 :SERVICE_START
-sc query "%SERVICE_NAME%" >nul
-if "%ERRORLEVEL%" == "0" (
-	"%APPPATH%\bin\httpd" -n "%SERVICE_NAME%" -k start
-	echo ¾ÆÆÄÄ¡ À¥¼­¹ö¸¦ ½ÃÀÛÇÕ´Ï´Ù.
+    sc query "%SERVICE_NAME%" >nul
+    if "%ERRORLEVEL%" == "0" (
+        "%APPPATH%\bin\httpd" -n "%SERVICE_NAME%" -k start
+        echo ì•„íŒŒì¹˜ ì›¹ì„œë²„ë¥¼ ì‹œìž‘í•©ë‹ˆë‹¤.
 
-) else (
-	echo ¾ÆÆÄÄ¡ À¥¼­¹ö°¡ ÀÌ¹Ì ¼­ºñ½º µî·ÏµÇ¾îÀÖÁö ¾Ê½À´Ï´Ù.
+    ) else (
+        echo ì•„íŒŒì¹˜ ì›¹ì„œë²„ê°€ ì´ë¯¸ ì„œë¹„ìŠ¤ ë“±ë¡ë˜ì–´ìžˆì§€ ì•ŠìŠµë‹ˆë‹¤.
 
-)
-timeout /t 60
-goto SELECTION
+    )
+    timeout /t 60
+    goto SELECTION
 
 
 
 
 
 REM ==========================================
-REM ¼­ºñ½º Á¾·á
+REM ì„œë¹„ìŠ¤ ì¢…ë£Œ
 REM ==========================================
 :SERVICE_STOP
-sc query "%SERVICE_NAME%" >nul
-if "%ERRORLEVEL%" == "0" (
-	"%APPPATH%\bin\httpd" -n "%SERVICE_NAME%" -k stop
-	echo ¾ÆÆÄÄ¡ À¥¼­¹ö¸¦ Á¾·áÇÕ´Ï´Ù.
+    sc query "%SERVICE_NAME%" >nul
+    if "%ERRORLEVEL%" == "0" (
+        "%APPPATH%\bin\httpd" -n "%SERVICE_NAME%" -k stop
+        echo ì•„íŒŒì¹˜ ì›¹ì„œë²„ë¥¼ ì¢…ë£Œí•©ë‹ˆë‹¤.
 
-) else (
-	echo ¾ÆÆÄÄ¡ À¥¼­¹ö°¡ ÀÌ¹Ì ¼­ºñ½º µî·ÏµÇ¾îÀÖÁö ¾Ê½À´Ï´Ù.
+    ) else (
+        echo ì•„íŒŒì¹˜ ì›¹ì„œë²„ê°€ ì´ë¯¸ ì„œë¹„ìŠ¤ ë“±ë¡ë˜ì–´ìžˆì§€ ì•ŠìŠµë‹ˆë‹¤.
 
-)
-timeout /t 60
-goto SELECTION
+    )
+    timeout /t 60
+    goto SELECTION
 
 
 
