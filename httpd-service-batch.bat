@@ -5,7 +5,7 @@ REM ====================================
 REM 환경설정 부분
 REM ====================================
 REM 등록될 서비스 명
-set SERVICE_NAME=httpd-2.4.46-php5
+set SERVICE_NAME=httpd-2.4.46
 
 REM HTTPD 폴더 경로 (비워두면 현재 폴더를 기준으로 함)
 set APPPATH=
